@@ -1,9 +1,11 @@
 namespace HotelOps.Api.Auth;
 
-using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;          // <- add if not already
+using System.IdentityModel.Tokens.Jwt;       // JwtRegisteredClaimNames
+using System.Security.Claims;                // Claim, ClaimTypes, ClaimsIdentity
 
 public class DemoAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
@@ -20,6 +22,7 @@ public class DemoAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        // No header -> let other handlers try
         if (!Request.Headers.TryGetValue("Authorization", out var auth) ||
             string.IsNullOrWhiteSpace(auth))
             return Task.FromResult(AuthenticateResult.NoResult());
@@ -33,8 +36,9 @@ public class DemoAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
         if (!value.StartsWith("Demo ", StringComparison.OrdinalIgnoreCase))
             return Task.FromResult(AuthenticateResult.Fail("Expect 'Demo' auth"));
 
-        var payload = value.Substring("Demo ".Length);
+        var payload = value["Demo ".Length..];
 
+        // Parse: key=value; key=value; ...
         var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         foreach (var part in payload.Split(';', StringSplitOptions.RemoveEmptyEntries))
         {
@@ -46,15 +50,24 @@ public class DemoAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
         var name  = dict.TryGetValue("name",  out var n) ? n : "Unknown";
         var email = dict.TryGetValue("email", out var e) ? e : "unknown@example.com";
 
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.Name, name),
-            new Claim(ClaimTypes.Email, email),
-            new Claim(ClaimTypes.Role, role),
-        };
+        // Support comma-separated roles: "Admin,CorporateAdmin"
+        var roles = role.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (roles.Length == 0) roles = new[] { "Guest" };
 
-        var id     = new ClaimsIdentity(claims, Scheme);
-        var ticket = new AuthenticationTicket(new ClaimsPrincipal(id), Scheme);
+        // Claims
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Name,  name ?? email ?? ""),
+            new(ClaimTypes.Email, email ?? ""),
+            new(JwtRegisteredClaimNames.Email, email ?? "")
+        };
+        foreach (var rr in roles)
+            claims.Add(new Claim(ClaimTypes.Role, rr));
+
+        var identity  = new ClaimsIdentity(claims, Scheme);
+        var principal = new ClaimsPrincipal(identity);
+        var ticket    = new AuthenticationTicket(principal, Scheme);
+
         return Task.FromResult(AuthenticateResult.Success(ticket));
     }
 }

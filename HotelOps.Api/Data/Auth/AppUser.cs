@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace HotelOps.Api.Data;
+namespace HotelOps.Api.Data.Auth;
 
 public class AppUser : IdentityUser
 {
-    public string TenantId { get; set; }  // multi-tenant prep
-    //public string? CorporateId { get; set; }            // set for corporate users
+    public string? DisplayName { get; set; }
+    public string? TenantId { get; set; } // optional, for corporate scoping later
 }

@@ -20,3 +20,9 @@ export function getDevRole(): string {
   const roles = getRoles();
   return roles[0] || "Guest";
 }
+// hotelops-web/src/auth.ts (add helper)
+export async function fetchMe(token: string){
+  const res = await fetch('/api/accounts/me', { headers: { Authorization: `Bearer ${token}` }});
+  if(!res.ok) throw new Error('unauthorized');
+  return res.json();
+}

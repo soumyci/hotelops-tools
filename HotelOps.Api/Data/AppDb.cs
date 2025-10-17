@@ -1,7 +1,8 @@
 using HotelOps.Api.Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
+using HotelOps.Api.Data.Entities;
+using HotelOps.Api.Data.Auth;
 namespace HotelOps.Api.Data
 {
     public class AppDb : IdentityDbContext<AppUser> // or your base
@@ -10,13 +11,13 @@ namespace HotelOps.Api.Data
 
         public DbSet<Room> Rooms => Set<Room>();
         public DbSet<RoomType> RoomTypes => Set<RoomType>();
+        public DbSet<Reservation> Reservations => Set<Reservation>();
         public DbSet<RatePlan> RatePlans => Set<RatePlan>();
 
         public DbSet<Amenity> Amenities => Set<Amenity>();
         public DbSet<RoomAmenity> RoomAmenities => Set<RoomAmenity>();
         // Data/AppDb.cs  (add DbSets)
         public DbSet<Customer> Customers => Set<Customer>();
-        public DbSet<Reservation> Reservations => Set<Reservation>();
         public DbSet<Payment> Payments => Set<Payment>();
         
         protected override void OnModelCreating(ModelBuilder b)
