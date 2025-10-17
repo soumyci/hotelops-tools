@@ -1,0 +1,16 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+
+namespace HotelOps.Api.Data
+{
+  public class AppDbFactory : IDesignTimeDbContextFactory<AppDb>
+  {
+    public AppDb CreateDbContext(string[] args)
+    {
+      var opt = new DbContextOptionsBuilder<AppDb>()
+        .UseNpgsql("Host=localhost;Port=5432;Database=hotelops;Username=hotelops;Password=hotelops")
+        .Options;
+      return new AppDb(opt);
+    }
+  }
+}

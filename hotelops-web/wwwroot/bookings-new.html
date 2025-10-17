@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HotelOps • New Booking (Corporate)</title>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-semibold" href="index.html">HotelOps</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topnav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="topnav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="index.html">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="availability.html">Availability</a></li>
+        <li class="nav-item"><a class="nav-link" href="bookings.html">Bookings</a></li>
+        <li class="nav-item"><a class="nav-link" href="bookings-new.html">New Booking</a></li>
+      </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control form-control-sm me-2" type="search" placeholder="Search">
+      </form>
+      <div class="ms-3 dropdown">
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">TAU Consortium</button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">Switch property</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid my-3">
+  <div class="row">
+    <div class="col-lg-2 d-none d-lg-block">
+      <div class="list-group shadow-sm rounded-3">
+        <a href="index.html" class="list-group-item list-group-item-action">Dashboard</a>
+        <a href="availability.html" class="list-group-item list-group-item-action">Availability</a>
+        <a href="bookings.html" class="list-group-item list-group-item-action">Bookings</a>
+        <a href="bookings-new.html" class="list-group-item list-group-item-action">New Booking</a>
+      </div>
+    </div>
+    <div class="col-lg-10">
+
+<h1 class="h4 mb-3">New Booking (Corporate)</h1>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <ul class="nav nav-pills mb-3" id="wizardTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="step1-tab" data-bs-toggle="pill" data-bs-target="#step1" type="button">1. Trip & Occupancy</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="step2-tab" data-bs-toggle="pill" data-bs-target="#step2" type="button">2. Availability & Rates</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="step3-tab" data-bs-toggle="pill" data-bs-target="#step3" type="button">3. Guest & Extras</button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <!-- Step 1 -->
+      <div class="tab-pane fade show active" id="step1">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Corporate</label>
+            <input class="form-control" id="corpName" value="TAU Consortium" readonly />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Check-in</label>
+            <input type="datetime-local" class="form-control" id="checkIn"/>
+            <div class="form-text">Default 14:00 — early arrivals may add charges.</div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Check-out</label>
+            <input type="datetime-local" class="form-control" id="checkOut"/>
+            <div class="form-text">Default 10:00 — late checkout may add charges.</div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Adults</label>
+            <input type="number" class="form-control" id="adults" value="1" min="1"/>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Children</label>
+            <input type="number" class="form-control" id="children" value="0" min="0"/>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Rooms</label>
+            <input type="number" class="form-control" id="rooms" value="1" min="1"/>
+          </div>
+          <div class="col-md-12">
+            <label class="form-label">Preferred Room Types</label>
+            <div class="d-flex gap-2 flex-wrap">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="DLX" id="rtDLX"><label class="form-check-label" for="rtDLX">Deluxe</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="STD" id="rtSTD"><label class="form-check-label" for="rtSTD">Standard</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="STE" id="rtSTE"><label class="form-check-label" for="rtSTE">Suite</label>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" id="notes" rows="2"></textarea>
+          </div>
+          <div class="col-12 d-flex justify-content-end">
+            <button class="btn btn-primary" id="toStep2">Next: Check Availability</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="tab-pane fade" id="step2">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="fw-semibold">Availability & Corporate Rates</div>
+          <div id="policyBadge"></div>
+        </div>
+        <div id="matrixNarrow" class="table-responsive small mb-3"></div>
+        <div id="priceSummary" class="border rounded p-3 bg-body-tertiary"></div>
+        <div class="d-flex justify-content-between mt-3">
+          <button class="btn btn-outline-secondary" id="backTo1">Back</button>
+          <button class="btn btn-primary" id="toStep3">Next: Guest & Extras</button>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="tab-pane fade" id="step3">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Primary Guest Name</label>
+            <input class="form-control" id="guestName"/>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Phone</label>
+            <input class="form-control" id="guestPhone"/>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Email</label>
+            <input class="form-control" id="guestEmail"/>
+          </div>
+          <div class="col-md-12">
+            <label class="form-label">Extras</label>
+            <div class="d-flex gap-3 flex-wrap">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="airport" id="exAirport"><label class="form-check-label" for="exAirport">Airport pickup</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="breakfast" id="exBreakfast"><label class="form-check-label" for="exBreakfast">Breakfast</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="late" id="exLate"><label class="form-check-label" for="exLate">Late checkout</label>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 d-flex justify-content-between">
+            <button class="btn btn-outline-secondary" id="backTo2">Back</button>
+            <div>
+              <button class="btn btn-warning me-2" id="submitApproval">Submit for Approval</button>
+              <button class="btn btn-success" id="confirmBooking">Confirm Booking</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Components -->
+<script src="assets/js/providers/availability.dummy.js"></script>
+<script src="assets/js/services/pricing.js"></script>
+<script src="assets/js/services/approval.js"></script>
+<script src="assets/js/components/availability-matrix.js"></script>
+<script src="assets/js/components/price-summary.js"></script>
+<script src="assets/js/components/hints.js"></script>
+<script src="assets/js/utils/date.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Defaults for times: 14:00 / 10:00 today+1
+  const now = new Date();
+  const inD = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 14, 0);
+  const outD= new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 10, 0);
+  document.getElementById('checkIn').value = DateUtil.toLocalInput(inD);
+  document.getElementById('checkOut').value= DateUtil.toLocalInput(outD);
+
+  // Tooltip/Hints setup will run from app.js automatically
+});
+</script>
+
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

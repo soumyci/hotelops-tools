@@ -1,0 +1,10 @@
+{
+  "CorporateId": "ACME",
+  "RoomTypeId": "DLX",
+  "RatePlanCode": "CORP-2025",
+  "CheckIn": "2025-10-05T14:00:00Z",
+  "CheckOut": "2025-10-06T10:00:00Z",
+  "GuestName": "Demo Corporate Guest",
+  "Phone": "9000000000",
+  "PricePerNight": 3000
+}

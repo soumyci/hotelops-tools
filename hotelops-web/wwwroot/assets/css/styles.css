@@ -1,0 +1,13 @@
+
+:root{
+  --brand: #0d6efd;
+  --ink: #1f2937;
+  --muted: #6b7280;
+}
+.card{ border-radius: 1rem; }
+.list-group .list-group-item{ border: 0; }
+.badge-dot{
+  display:inline-block; width:.6rem; height:.6rem; border-radius:50%; margin-right:.25rem;
+}
+.table thead th{ white-space:nowrap; }
+.hint-badge{ cursor:pointer; }
