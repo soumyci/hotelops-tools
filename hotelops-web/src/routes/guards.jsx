@@ -10,3 +10,10 @@ export function RequireRole({ role }) {
   const current = localStorage.getItem("role");
   return current === role ? <Outlet /> : <Navigate to="/login" replace />;
 }
+function getToken() {
+  return localStorage.getItem("token") || "";
+}
+function getRoles() {
+  try { return JSON.parse(localStorage.getItem("roles") || "[]"); }
+  catch { return []; }
+}
