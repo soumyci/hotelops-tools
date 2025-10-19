@@ -1,29 +1,19 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import App from "@/App.jsx";
 import Login from "@/pages/auth/index.jsx";
-
 import AdminDashboard from "@/pages/AdminDashboard.jsx";
 import AdminRoomsPage from "@/pages/admin/AdminRoomsPage.jsx";
 import RoomTypesPage from "@/pages/admin/AdminRoomTypesPage.jsx";
 import RatePlansPage from "@/pages/admin/AdminRatePlansPage.jsx";
-
 import CorporateDashboard from "@/pages/CorporateDashboard.jsx";
 import StaffDashboard from "@/pages/StaffDashboard.jsx";
 import AmenitiesPage from "@/pages/admin/AmenitiesPage.jsx";
-
 import { RequireAuth, RequireRole } from "@/routes/guards.jsx";
-// src/routes.jsx  (inside the protected area with corporate role)
 import CorporateBookingsPage from "@/pages/corporate/CorporateBookingsPage.jsx";
-import AdminUsersPage from "@/pages/admin/AdminUsersPage.jsx";
-
-// src/routes.jsx
+import AdminUsersPage from "@/pages/admin/AdminUsersPage.jsx";// src/routes.jsx
 import RecordPaymentPage from "@/pages/accounts/RecordPaymentPage.jsx";
 import PendingReportPage from "@/pages/accounts/PendingReportPage.jsx";
-{/* … (Admin/Hotel area) */}
-
-
-
-
+import BookingCreate from "@/pages/BookingCreate.jsx";
 export default function AppRoutes() {
   return (
     <BrowserRouter>
@@ -36,6 +26,7 @@ export default function AppRoutes() {
         {/* Protected area w/ shared header (App) */}
         <Route element={<RequireAuth />}>
           <Route element={<App />}>
+          <Route path="/book" element={<BookingCreate />} />
             {/* Admin */}
             <Route element={<RequireRole role="admin" />}>
               <Route path="/dashboard" element={<AdminDashboard />} />
@@ -51,6 +42,7 @@ export default function AppRoutes() {
               <Route path="/corporate" element={<CorporateDashboard />} />
               <Route path="/corporate/*" element={<CorporateDashboard />} /> {/* <- catch-all */}
               <Route path="/corporate/bookings" element={<CorporateBookingsPage />} />
+              <Route path="/book" element={<BookingCreate />} />
             </Route>
 
             // Staff

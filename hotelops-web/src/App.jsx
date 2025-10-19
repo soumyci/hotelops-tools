@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet,Link } from "react-router-dom";
 import useLogout from "@/hooks/useLogout";
 
 const LINKS = {
@@ -7,11 +7,12 @@ const LINKS = {
     { to: "/admin/rooms",      label: "Rooms" },
     { to: "/admin/roomtypes",  label: "Room Types" },
     { to: "/admin/rateplans",  label: "Rate Plans" },
-    { to: "/admin/amenities",  label: "Amenities" }
+    { to: "/admin/amenities",  label: "Amenities" },
+    { to: "/book",            label: "Book" }, 
   ],
   corporate: [
     { to: "/corporate",            label: "Overview" },          // same page for now
-    { to: "/corporate/bookings",   label: "Bookings" },
+     { to: "/book",            label: "Book" }, 
     { to: "/corporate/approvals",  label: "Approvals" },
     { to: "/corporate/offers",     label: "Offers & Discounts" },
     { to: "/corporate/combos",     label: "Combos" },
