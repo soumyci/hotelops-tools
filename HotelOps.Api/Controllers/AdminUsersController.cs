@@ -39,7 +39,7 @@ public class AdminUsersController : ControllerBase
         return Ok(result);
     }
 
-    public record CreateUserDto(string UserName, string Email, string Password, string[] Roles, string TenantId);
+    public record CreateUserDto(string UserName, string Email, string Password, string[] Roles, int TenantId);
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUserDto dto)
     {

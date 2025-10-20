@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
-
+using HotelOps.Api.Data.Auth;
 namespace HotelOps.Api.Data.Auth;
 
 public static class IdentitySeed
@@ -14,7 +14,7 @@ public static class IdentitySeed
     public static async Task RunAsync(IServiceProvider sp)
     {
         var roleMgr = sp.GetRequiredService<RoleManager<IdentityRole>>();
-        var userMgr = sp.GetRequiredService<UserManager<AppUser>>();
+        var userMgr = sp.GetRequiredService<UserManager<HotelOps.Api.Data.Auth.AppUser>>();
 
         foreach (var r in Roles)
             if (!await roleMgr.RoleExistsAsync(r))
@@ -27,7 +27,7 @@ public static class IdentitySeed
         var admin = await userMgr.FindByEmailAsync(adminEmail);
         if (admin is null)
         {
-            admin = new AppUser { UserName = adminEmail, Email = adminEmail, DisplayName = "Super Admin" };
+            admin = new HotelOps.Api.Data.Auth.AppUser { UserName = adminEmail, Email = adminEmail, DisplayName = "Super Admin" };
             var created = await userMgr.CreateAsync(admin, adminPass);
             if (created.Succeeded)
                 await userMgr.AddToRoleAsync(admin, "Admin");

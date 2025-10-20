@@ -41,14 +41,14 @@ public class AdminRatesController : ControllerBase
         var r = await _db.Rates.FindAsync(id);
         return r is null
             ? NotFound()
-            : new RatePlanDto { Id = r.Id, TenantId = r.TenantId, RoomCode = r.RoomCode, Date = r.Date, Price = r.Price };
+            : new RatePlanDto { Id = r.Id, TenantId = 1, RoomCode = r.RoomCode, Date = r.Date, Price = r.Price };
     }
 
     [HttpPost]
     public async Task<ActionResult<RatePlanDto>> Create([FromBody] RatePlanCreateDto x)
     {
         var e = new Rate {
-            TenantId = x.TenantId,      // if you set tenant server-side, replace this later
+            TenantId = 1,      // if you set tenant server-side, replace this later
             RoomCode = x.RoomCode,
             Date = x.Date,
             Price = x.Price
@@ -56,7 +56,7 @@ public class AdminRatesController : ControllerBase
         _db.Rates.Add(e);
         await _db.SaveChangesAsync();
 
-        var dto = new RatePlanDto { Id = e.Id, TenantId = e.TenantId, RoomCode = e.RoomCode, Date = e.Date, Price = e.Price };
+        var dto = new RatePlanDto { Id = e.Id, TenantId = 1, RoomCode = e.RoomCode, Date = e.Date, Price = e.Price };
         return CreatedAtAction(nameof(Get), new { id = e.Id }, dto);
     }
 
