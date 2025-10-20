@@ -29,6 +29,8 @@
   <!-- exclude anything under Controllers\disabled\ from compilation -->
   <Compile Remove="Controllers\disabled\**\*.cs" />
   <Compile Remove="Data\disabled\**\*.cs" />
+    <Compile Remove="Controllers/BookingsController.cs" />
+
 </ItemGroup>
 
 </Project>

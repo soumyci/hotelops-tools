@@ -37,7 +37,7 @@ namespace HotelOps.Api.Data
                     UserName = email,
                     Email    = email,
                     // IMPORTANT: satisfy non-null property
-                    TenantId = cfg["Admin:TenantId"] ?? "root"   // <- set something valid for your schema
+                    TenantId = 1   // <- set something valid for your schema
                 };
 
                 var createRes = await userManager.CreateAsync(user, password);

@@ -28,7 +28,7 @@ public class AdminRatesController : ControllerBase
 
         var rows = await q.OrderBy(r => r.RoomCode).ThenBy(r => r.Date)
             .Select(r => new RatePlanDto {
-                Id = r.Id, TenantId = r.TenantId, RoomCode = r.RoomCode, Date = r.Date, Price = r.Price
+                Id = r.Id, TenantId = 1, RoomCode = r.RoomCode, Date = r.Date, Price = r.Price
             })
             .ToListAsync();
 
@@ -48,7 +48,7 @@ public class AdminRatesController : ControllerBase
     public async Task<ActionResult<RatePlanDto>> Create([FromBody] RatePlanCreateDto x)
     {
         var e = new Rate {
-            TenantId = x.TenantId,      // if you set tenant server-side, replace this later
+            TenantId = 1,      // if you set tenant server-side, replace this later
             RoomCode = x.RoomCode,
             Date = x.Date,
             Price = x.Price

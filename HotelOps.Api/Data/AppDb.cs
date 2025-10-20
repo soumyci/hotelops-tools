@@ -60,6 +60,14 @@ namespace HotelOps.Api.Data
                 .HasOne(x => x.Amenity)
                 .WithMany(a => a.RoomAmenities)
                 .HasForeignKey(x => x.AmenityId);
+
+            b.Entity<Payment>(p =>{
+            p.Property(e => e.Amount).HasPrecision(12, 2);
+            p.HasIndex(e => e.PaymentDate);
+            p.HasIndex(e => e.InvoiceNumber);
+            p.HasIndex(e => new { e.CustomerCode, e.PaymentDate });
+            
+        });
         }
     }
 }

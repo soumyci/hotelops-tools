@@ -16,7 +16,7 @@ namespace HotelOps.Api.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    TenantId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TenantId = 1,
                     RoomId = table.Column<Guid>(type: "uuid", nullable: true),
                     RoomCode = table.Column<string>(type: "text", nullable: false),
                     GuestName = table.Column<string>(type: "text", nullable: false),

@@ -42,7 +42,7 @@ public class AdminUsersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUserDto dto)
     {
-        var user = new AppUser { UserName = dto.UserName, Email = dto.Email, TenantId = dto.TenantId };
+        var user = new AppUser { UserName = dto.UserName, Email = dto.Email, TenantId = 1 };
         var res = await _users.CreateAsync(user, dto.Password);
         if (!res.Succeeded) return BadRequest(res.Errors);
 

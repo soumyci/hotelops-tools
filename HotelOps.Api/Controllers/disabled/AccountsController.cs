@@ -55,7 +55,12 @@ public class AccountsController : ControllerBase
                      join p in paid on b.Customer equals p.Customer into gj
                      from p in gj.DefaultIfEmpty()
                      select new PendingItem(b.Customer, b.Billed, p?.Paid ?? 0m, b.Billed - (p?.Paid ?? 0m));
+        var custName = await _db.Customers
+        .Where(c => c.Code == payment.CustomerCode)
+        .Select(c => c.Name)
+        .FirstOrDefaultAsync();
 
+        payment.CustomerName = custName ?? payment.CustomerName;
         return result.OrderByDescending(x => x.Pending);
     }
 }

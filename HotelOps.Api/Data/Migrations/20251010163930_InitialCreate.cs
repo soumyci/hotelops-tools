@@ -75,7 +75,7 @@ namespace HotelOps.Api.Data.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TenantId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TenantId = 1,
                     RoomCode = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     Name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     Capacity = table.Column<int>(type: "integer", nullable: false),

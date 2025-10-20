@@ -19,7 +19,7 @@ public class RoomsController : ControllerBase
         var rooms = await _db.Rooms
             .OrderBy(r => r.RoomCode)
             .Select(r => new RoomDto {
-                Id = r.Id, TenantId = r.TenantId, RoomCode = r.RoomCode, Name = r.Name,
+                Id = r.Id, TenantId = 1, RoomCode = r.RoomCode, Name = r.Name,
                 Type = r.Type, Capacity = r.Capacity, BasePrice = r.BasePrice,
                 AmenitiesCsv = r.AmenitiesCsv, ImageUrl = r.ImageUrl
             })
@@ -34,7 +34,7 @@ public class RoomsController : ControllerBase
         var r = await _db.Rooms.FindAsync(id);
         if (r is null) return NotFound();
         return new RoomDto {
-            Id = r.Id, TenantId = r.TenantId, RoomCode = r.RoomCode, Name = r.Name,
+            Id = r.Id, TenantId = 1, RoomCode = r.RoomCode, Name = r.Name,
             Type = r.Type, Capacity = r.Capacity, BasePrice = r.BasePrice,
             AmenitiesCsv = r.AmenitiesCsv, ImageUrl = r.ImageUrl
         };

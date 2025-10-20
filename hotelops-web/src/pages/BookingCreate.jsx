@@ -1,6 +1,6 @@
 import { useState } from "react";
 //import client from "@/api/client";
-import { createBooking } from "@/api/http.js"
+    import { createBooking } from "@/api/http.js"
 export default function BookingCreate() {
   const [form, setForm] = useState({
     guestName: "", mobile: "", checkIn: new Date().toISOString().slice(0,10),

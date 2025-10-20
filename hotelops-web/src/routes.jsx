@@ -14,12 +14,16 @@ import AdminUsersPage from "@/pages/admin/AdminUsersPage.jsx";// src/routes.jsx
 import RecordPaymentPage from "@/pages/accounts/RecordPaymentPage.jsx";
 import PendingReportPage from "@/pages/accounts/PendingReportPage.jsx";
 import BookingCreate from "@/pages/BookingCreate.jsx";
+import PaymentCreate from "@/pages/accounts/PaymentCreate.jsx";
+import Register from "@/pages/Register.jsx";
+
 export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         {/* Public */}
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         {/* If someone hits "/", send them somewhere real */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
@@ -34,8 +38,10 @@ export default function AppRoutes() {
               <Route path="/admin/roomtypes" element={<RoomTypesPage />} />
               <Route path="/admin/rateplans" element={<RatePlansPage />} />
               <Route path="/admin/amenities" element={<AmenitiesPage />} />
-              <Route path="/admin/users" element={<AdminUsersPage />} />
+              <Route path="/admin/users" element={<AdminUsersPage />} />                        
             </Route>
+            
+              
 
             // Corporate
             <Route element={<RequireRole role="corporate" />}>
@@ -49,6 +55,7 @@ export default function AppRoutes() {
             <Route element={<RequireRole role="staff" />}>
               <Route path="/staff" element={<StaffDashboard />} />
               <Route path="/staff/*" element={<StaffDashboard />} /> {/* <- catch-all */}
+              <Route path="/staff/payments" element={<PaymentCreate />} />    
             </Route>
 
 
