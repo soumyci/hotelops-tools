@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using System.Security.Claims;               // <-- add this
 using HotelOps.Api.Data.Entities;          // <-- and this
+using HotelOps.Api.Data.Auth;
 
 namespace HotelOps.Api.Data
 {

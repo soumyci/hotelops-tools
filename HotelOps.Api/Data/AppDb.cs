@@ -1,7 +1,7 @@
 using HotelOps.Api.Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
+using HotelOps.Api.Data.Auth;
 namespace HotelOps.Api.Data
 {
     public class AppDb : IdentityDbContext<AppUser> // or your base
