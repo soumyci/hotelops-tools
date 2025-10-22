@@ -1,30 +1,29 @@
-﻿# Node / Vite
+# .NET
+**/bin/
+**/obj/
+*.user
+*.suo
+*.svclog
+*.userprefs
+*.ncrunchsolution
+
+# Node / Vite
 node_modules/
 dist/
 .vite/
 
-# .NET
-bin/
-obj/
-*.user
-*.suo
-
-# Env & secrets
-.env
-.env.*
-*.Development.json
-
-# OS/IDE
-.DS_Store
-Thumbs.db
+# IDE
 .vscode/
 .idea/
+*.code-workspace
 
-# Logs & dumps
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Env / secrets
+*.env
+*.env.*
+secrets.json
+# Keep dev settings local (avoid leaking JWT keys)
+appsettings.Development.json
+
+# Builds / artifacts
+wwwroot/uploads/
 *.log
-
-# Builds & zips
-*.zip

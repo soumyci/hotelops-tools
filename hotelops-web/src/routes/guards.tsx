@@ -1,81 +1,58 @@
+// src/routes/guards.tsx
+import * as React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useSyncExternalStore } from "react";
-import { isAuthed, isAdmin, getRoles } from "@/auth.ts";
 
-// Single source of truth for login path
+type UiRole = "admin" | "corporate" | "staff";
 const LOGIN_PATH = "/login";
 
-// Re-render guards when auth changes
-function useAuthStoreSnapshot() {
-  return useSyncExternalStore(
-    (cb) => {
-      const onChange = () => cb();
-      window.addEventListener("auth:changed", onChange);
-      window.addEventListener("storage", onChange);
-      return () => {
-        window.removeEventListener("auth:changed", onChange);
-        window.removeEventListener("storage", onChange);
-      };
-    },
-    () => localStorage.getItem("jwt") || ""
+/* ---------- tiny auth store (localStorage) ---------- */
+function readRole(): UiRole | null {
+  const r = localStorage.getItem("role");
+  return r === "admin" || r === "corporate" || r === "staff" ? r : null;
+}
+function readToken(): string | null {
+  return localStorage.getItem("token");
+}
+
+function subscribe(cb: () => void) {
+  const onStorage = () => cb();
+  const onAuthChanged = () => cb();
+  window.addEventListener("storage", onStorage);
+  window.addEventListener("auth-changed", onAuthChanged);
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener("auth-changed", onAuthChanged);
+  };
+}
+function useAuthSnapshot() {
+  return React.useSyncExternalStore(
+    subscribe,
+    () => ({ role: readRole(), token: readToken() }),
+    () => ({ role: readRole(), token: readToken() })
   );
 }
 
-/** Must be logged in */
+/* ---------- Guards you import in routes ---------- */
+
+// Require any authenticated user (token present)
 export function RequireAuth() {
-  useAuthStoreSnapshot();
-  const loc = useLocation();
-  if (!isAuthed()) {
-    return <Navigate to={LOGIN_PATH} replace state={{ from: loc }} />;
-  }
-  return <Outlet />;
+  const { token } = useAuthSnapshot();
+  const location = useLocation();
+  return token ? <Outlet /> : <Navigate to={LOGIN_PATH} state={{ from: location }} replace />;
 }
 
-/** Must be Admin */
-export function RequireAdmin() {
-  useAuthStoreSnapshot();
-  const loc = useLocation();
-  if (!isAuthed()) {
-    return <Navigate to={LOGIN_PATH} replace state={{ from: loc }} />;
-  }
-  if (!isAdmin()) {
-    return (
-      <Navigate
-        to="/dashboard"
-        replace
-        state={{ flash: "Admin permission required.", from: loc }}
-      />
-    );
-  }
-  return <Outlet />;
+// Require a specific UI role
+export function RequireRole({ role }: { role: UiRole }) {
+  const { role: currentRole } = useAuthSnapshot();
+  const location = useLocation();
+  return currentRole === role
+    ? <Outlet />
+    : <Navigate to={LOGIN_PATH} state={{ from: location }} replace />;
 }
 
-/** Flexible role gate */
-type RoleGuardProps = {
-  anyOf?: string[]; // have ANY of these
-  allOf?: string[]; // have ALL of these
-  redirectTo?: string;
-};
+/* ---------- Optional shorthands ---------- */
+export function RequireAdmin()   { return <RequireRole role="admin" />; }
+export function RequireCorporate(){ return <RequireRole role="corporate" />; }
+export function RequireStaff()   { return <RequireRole role="staff" />; }
 
-export function RequireRole({ anyOf, allOf, redirectTo = "/dashboard" }: RoleGuardProps) {
-  useAuthStoreSnapshot();
-  const loc = useLocation();
 
-  if (!isAuthed()) {
-    return <Navigate to={LOGIN_PATH} replace state={{ from: loc }} />;
-  }
-
-  const roles = getRoles();
-  const okAny = !anyOf || anyOf.some((r) => roles.includes(r));
-  const okAll = !allOf || allOf.every((r) => roles.includes(r));
-
-  if (okAny && okAll) return <Outlet />;
-
-  return (
-    <Navigate
-      to={redirectTo}
-      replace
-      state={{ flash: "You don't have permission.", from: loc }}
-    />
-  );
-}

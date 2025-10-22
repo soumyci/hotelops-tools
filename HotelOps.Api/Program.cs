@@ -1,10 +1,15 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using HotelOps.Api.Data;
-using HotelOps.Api.Auth;
-using Microsoft.AspNetCore.Authentication;
+using HotelOps.Api.Data.Auth;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.FileProviders;
-using HotelOps.Api.Data.Entities;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer; // <-- add
+using Microsoft.OpenApi.Models;                       // <-- add
+using HotelOps.Api.Data.Entities;      
 
 // Postgres timestamp behavior (optional, helps with older Npgsql models)
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -37,18 +42,75 @@ builder.Services.AddProblemDetails(options =>
         }
     };
 });
-// Auth
-builder.Services.AddAuthentication(DemoAuthHandler.Scheme)
-    .AddScheme<AuthenticationSchemeOptions, DemoAuthHandler>(DemoAuthHandler.Scheme, null);
+// Identity
+builder.Services
+    .AddIdentityCore<AppUser>(o =>
+    {
+        o.User.RequireUniqueEmail = false;
+        o.Password.RequiredLength = 6;
+        o.Password.RequireNonAlphanumeric = false;
+        o.Password.RequireUppercase = false;
+        o.Password.RequireLowercase = false;
+        o.Password.RequireDigit = false;
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AppDb>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
+
+var jwtKey     = builder.Configuration["Jwt:Key"]      ?? throw new InvalidOperationException("Jwt:Key missing");
+var jwtIssuer  = builder.Configuration["Jwt:Issuer"]   ?? throw new InvalidOperationException("Jwt:Issuer missing");
+var jwtAudience= builder.Configuration["Jwt:Audience"] ?? throw new InvalidOperationException("Jwt:Audience missing");
+var signingKey  = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme    = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false; // dev only
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtIssuer,
+
+            ValidateAudience = true,
+            ValidAudience = jwtAudience,
+
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = signingKey,
+
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromMinutes(1)
+        };
+        options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = ctx =>
+        {
+            Console.WriteLine("JWT auth failed: " + ctx.Exception.Message);
+            return Task.CompletedTask;
+        },
+        OnChallenge = ctx =>
+        {
+            // prints e.g. error="invalid_token"
+            Console.WriteLine($"JWT challenge: {ctx.Error} {ctx.ErrorDescription}");
+            return Task.CompletedTask;
+        }
+    };
+    });
 
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", p => p.RequireRole("Admin"));
     options.AddPolicy("CorporateOnly", p => p.RequireRole("Corporate"));
     options.AddPolicy("HotelOnly", p => p.RequireRole("Hotel"));
-    options.AddPolicy("CorporateOnly", p => p.RequireRole("Corporate", "CorporateBooker"));
-    options.AddPolicy("CorporateOnly", p => p.RequireRole("Corporate", "CorporateBooker"));
-    options.AddPolicy("AdminOnly", p => p.RequireRole("Admin"));
+    // options.AddPolicy("CorporateOnly", p => p.RequireRole("Corporate", "CorporateBooker"));
+    // options.AddPolicy("CorporateOnly", p => p.RequireRole("Corporate", "CorporateBooker"));
+    // options.AddPolicy("AdminOnly", p => p.RequireRole("Admin"));
 });
 
 // AutoMapper//
@@ -60,36 +122,34 @@ const string Frontend = "Frontend";
 builder.Services.AddCors(o => o.AddPolicy("open", p =>
     p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
 ));
-builder.Services.AddCors(o => o.AddPolicy("dev", p =>
-    p.WithOrigins("http://localhost:5173")
-     .AllowAnyHeader()
-     .AllowAnyMethod()
-));
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("ui", p => p
+        .WithOrigins("http://localhost:5173", "http://127.0.0.1:5173")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials());
+});
 // ── Swagger (unchanged) ─────────────────────────────────────────────
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "HotelOps.Api", Version = "v1" });
-    c.AddSecurityDefinition("DemoOrBearer", new OpenApiSecurityScheme
+
+    var scheme = new OpenApiSecurityScheme
     {
-        Description = "Put either:\n" +
-                      "Demo role=Admin; name=Admin User; email=admin@example.com\n" +
-                      "or\n" +
-                      "Bearer Demo role=Admin; name=Admin User; email=admin@example.com",
         Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "DemoOrBearer"
-    });
+        Description = "Type: Bearer {your JWT}"
+    };
+
+    c.AddSecurityDefinition("Bearer", scheme);
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "DemoOrBearer" }
-            },
-            Array.Empty<string>()
-        }
+        { new OpenApiSecurityScheme{ Reference = new OpenApiReference{ Type = ReferenceType.SecurityScheme, Id = "Bearer"}}, Array.Empty<string>() }
     });
 });
 
@@ -135,7 +195,7 @@ using (var scope = app.Services.CreateScope())
 app.UseHttpsRedirection();
 
 // CORS **must** be before auth and before MapControllers
-app.UseCors("dev");
+app.UseCors("ui");
 
 // Swagger UI is fine anywhere
 app.UseSwagger();
@@ -162,4 +222,8 @@ Directory.CreateDirectory(uploadsPath);
 //     var db = scope.ServiceProvider.GetRequiredService<AppDb>();
 //     db.Database.Migrate();         // creates DB/tables or updates schema
 // }
+using (var scope = app.Services.CreateScope())
+{
+    await HotelOps.Api.Data.IdentitySeed.EnsureAdminAsync(app.Services);
+}
 app.Run();

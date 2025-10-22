@@ -1,4 +1,4 @@
-const API = import.meta.env.VITE_API_BASE || "http://localhost:5212"; // adjust to yours
+const API = import.meta.env.VITE_API_BASE || "http://localhost:7212"; // adjust to yours
 
 export async function uploadFile(file){
   const fd = new FormData();

@@ -4,9 +4,12 @@ namespace HotelOps.Api.Data.Auth;
 
 public class AppUser : IdentityUser
 {
-    public string FullName { get; set; } = default!;
-    public int TenantId { get; set; } = 1;           // you had a non-null warning earlier
-    public string? CompanyCode { get; set; }         // optional placeholder
-    public string? CompanyName {get;set;}
-    public string? DisplayName {get;set;}
+       // ✅ Default values prevent nulls at insert time
+        public string FullName { get; set; } = "User";
+        public int TenantId { get; set; } = 1;
+
+        // Optional org fields — give empty defaults if you keep them non-null
+        public string CompanyCode { get; set; } = "";
+        public string CompanyName { get; set; } = "";
+    public string? DisplayName {get;set;}="";
 }

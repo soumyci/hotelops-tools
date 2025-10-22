@@ -1,3 +1,16 @@
+import axios from "axios";
+import { getToken } from "../auth";
+
+export const http = axios.create({
+  baseURL: "https://localhost:7212", // match your launchSettings port
+});
+
+http.interceptors.request.use((config) => {
+  const t = getToken();
+  if (t) config.headers.Authorization = `Bearer ${t}`;
+  return config;
+});
+
 // ---- Simple fetch helpers (with auth header) ----
 function authHeaders() {
   const t = localStorage.getItem("token");
